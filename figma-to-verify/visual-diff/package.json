@@ -1,0 +1,10 @@
+{
+  "name": "visual-diff",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "ws": "^8.18.0",
+    "sharp": "^0.33.0",
+    "looks-same": "^9.0.0"
+  }
+}

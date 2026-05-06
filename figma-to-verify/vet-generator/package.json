@@ -1,0 +1,9 @@
+{
+  "name": "vet-generator",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "sharp": "^0.33.0",
+    "ws": "^8.0.0"
+  }
+}
