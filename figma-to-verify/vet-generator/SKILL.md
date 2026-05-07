@@ -100,6 +100,33 @@ Replacement tabs introduce new IDs and risk the same concurrency issue.
 
 If the page requires interaction to reach the target state (click a tab, scroll, log in), use `chrome-cdp` to interact with the page using the recorded tab ID **before** taking any screenshots.
 
+### 1.5 — Sync viewport to Figma design dimensions
+
+If the Figma HTML was produced by `figma-to-html`, a `viewport.json` file is written alongside `index.html`:
+
+```json
+{ "width": 390, "height": 844, "mobile": true }
+```
+
+Read this file and apply the viewport to **both** tabs before taking any screenshots, so flexible layouts render at the correct width.
+
+```bash
+# STD_TAB — viewport only (no UA override; Figma HTML is static)
+node <chrome-cdp>/scripts/set-viewport.mjs \
+     --tab <STD_TAB> --width <W> --height <H>
+
+# DEV_TAB — viewport + mobile UA when mobile: true
+node <chrome-cdp>/scripts/set-viewport.mjs \
+     --tab <DEV_TAB> --width <W> --height <H> [--mobile]
+
+# Reload DEV_TAB so the page re-renders at the new viewport
+node <chrome-cdp>/scripts/navigate.mjs --tab <DEV_TAB> --url <dev-url>
+```
+
+> If `viewport.json` is absent (e.g. the standard page is a plain URL rather than Figma HTML), skip this step.
+
+---
+
 ### 2 — Original screenshots (baseline)
 
 Capture what both pages actually look like before any overlay, as reference for later comparison.

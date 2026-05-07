@@ -15,8 +15,7 @@ Export specific Figma design layers to standalone HTML files with accompanying i
 ## Prerequisites
 
 - Figma personal access token (set as `FIGMA_TOKEN` env var, or the user provides it)
-- Username for the internal convert API (optional, set as `FIGMA_USERNAME` env var)
-- The bundled script `scripts/convert-node.mjs` handles the full pipeline: HTML conversion + image download
+- The bundled script `scripts/convert-node.mjs` handles the full pipeline: direct F2C HTML conversion + image download
 - The bundled script `scripts/export-image.mjs` exports a single node as an image (PNG/JPG/SVG/PDF)
 
 ## Workflow
@@ -72,16 +71,15 @@ For each selected layer, run the bundled conversion script:
 node {SKILL_PATH}/scripts/convert-node.mjs \
   --figma-url "https://www.figma.com/design/{FILE_KEY}/{name}?node-id={NODE_ID}" \
   --token "{TOKEN}" \
-  --username "{USERNAME}" \
   --output "{OUTPUT_DIR}"
 ```
 
 Parameters:
 - `--figma-url`: The full Figma URL for this specific node (must include node-id)
 - `--token`: Figma personal access token (from `FIGMA_TOKEN` env var or user input)
-- `--username`: Username for the convert API (from `FIGMA_USERNAME` env var or default)
 - `--output`: Output directory path
 - `--scale`: Image export scale factor, default `1`. Use `2` for retina/2x images
+- `--username`: Preserved only for backward CLI compatibility; the local converter ignores it
 
 The script creates a directory per node:
 ```
@@ -124,19 +122,19 @@ Parameters:
 
 This is useful when the user wants a visual preview, a design screenshot, or needs to inspect what a node looks like before deciding to export as HTML.
 
-## Token and username resolution
+## Token resolution
 
-Resolve the Figma token and username in this order:
-1. If the user provides them directly in the conversation, use those
-2. Check environment variables `FIGMA_TOKEN` and `FIGMA_USERNAME`
-3. Check the `.env` file in the project root directory (parse `KEY=VALUE` lines; look for `FIGMA_TOKEN` and `FIGMA_USERNAME`)
-4. If still not found, ask the user for the token (required) and username (optional)
+Resolve the Figma token in this order:
+1. If the user provides it directly in the conversation, use it
+2. Check environment variable `FIGMA_TOKEN`
+3. Check the `.env` file in the project root directory (parse `KEY=VALUE` lines; look for `FIGMA_TOKEN`)
+4. If still not found, ask the user for the token
 
 ## Notes
 
-- The convert API is an internal service at `http://figma-restapi-server.sandbox.ee-fe.appspace.baidu.com/api/convert`
-- Image assets are downloaded via the official Figma Images API (`https://api.figma.com/v1/images/{fileKey}?ids=...&format=png&scale={scale}`)
-- Some images may fail to download (vector-only nodes, empty layers) — this is normal. Expect ~90% success rate
+- HTML conversion is requested directly from `https://f2c-figma-api.yy.com/api/nodes`, without relying on the previous sandbox convert service
+- Image assets referenced by F2C output are localized by downloading remote `figma-alpha-api` image URLs into the generated `assets/` directory
+- Some images may fail to download (vector-only nodes, empty layers) — this is normal
 - The HTML uses absolute positioning and inline styles, making it self-contained but not suitable as production code without refactoring
 - If a Figma URL already has a node-id, skip the layer listing and matching steps — just convert directly
-- Figma node-id format: URLs use dashes (`0-7067`) but the API returns colons (`0:7067`). The convert API accepts the URL as-is (with dashes)
+- Figma node-id format: URLs use dashes (`0-7067`) but the Figma REST API uses colons (`0:7067`); the script converts automatically when needed
