@@ -154,7 +154,7 @@ export async function runScript(cdp, expression) {
 export async function openTab(url, host = 'localhost:9222') {
   let tabs;
   try {
-    const r = await fetch(`http://${host}/json/new?${url}`, { method: 'PUT' });
+    const r = await fetch(`http://${host}/json/new?${encodeURIComponent(url)}`, { method: 'PUT' });
     return r.json();
   } catch {
     console.error(`Cannot connect to Chrome at ${host}. See: ${CHROME_DEBUG_REF}`);

@@ -221,15 +221,4 @@ for (const file of files) {
 
 console.log(`  Total downloaded: ${totalDownloaded} images`);
 
-// Write viewport metadata derived from Figma node dimensions
-if (nodeInfo.width != null && nodeInfo.height != null) {
-  const viewport = {
-    width: Math.round(nodeInfo.width),
-    height: Math.round(nodeInfo.height),
-    mobile: nodeInfo.width <= 480,
-  };
-  await writeFile(join(outDir, 'viewport.json'), JSON.stringify(viewport, null, 2));
-  console.log(`  Viewport: ${viewport.width}x${viewport.height}${viewport.mobile ? ' (mobile)' : ''}`);
-}
-
 console.log(`Done! Output: ${outDir}`);

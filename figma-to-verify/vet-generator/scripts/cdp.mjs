@@ -90,7 +90,7 @@ export async function runScript(cdp, expression) {
 
 /** Open a new tab navigating to url. Returns the tab descriptor ({ id, ... }). */
 export async function openTab(url, host = 'localhost:9222') {
-  const r = await fetch(`http://${host}/json/new?${url}`, { method: 'PUT' });
+  const r = await fetch(`http://${host}/json/new?${encodeURIComponent(url)}`, { method: 'PUT' });
   return r.json();
 }
 

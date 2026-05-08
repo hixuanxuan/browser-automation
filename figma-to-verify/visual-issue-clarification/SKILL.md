@@ -50,7 +50,27 @@ Computed styles are the only source of truth — do not read class names, inline
 Locate the relevant elements on both pages by querying the DOM. Use the issue description and
 the reference images to guide which elements and properties to measure.
 
-### 2 — Produce annotated screenshots
+### 2 — Determine whether the issue is real (false positive check)
+
+After measuring computed styles on both pages, apply a two-layer judgement:
+
+**Layer 1 — Computed values:** If the values are identical, the issue is a **false positive**
+without further investigation. Do not apply any numeric tolerance — a 1px difference is still
+a difference and must proceed to Layer 2.
+
+**Layer 2 — Source intent (only when computed values differ):** A numeric difference in computed
+styles is a necessary condition for a real issue, but not a sufficient one. Before concluding the
+issue is real, examine the underlying CSS rules, class names, and inline styles to understand
+*why* the values differ. If the difference is explained by the styling intent rather than a
+coding mistake — i.e., both pages are faithfully implementing their respective style rules and
+the divergence is an expected consequence of those rules — the issue is a **false positive**.
+If the difference cannot be explained by the styling intent and represents an actual deviation
+from what the dev page should be rendering, the issue is **real**.
+
+Use your judgement to weigh both layers. Document the computed values, the relevant style rules
+you examined, and your reasoning — regardless of the final verdict.
+
+### 3 — Produce annotated screenshots
 
 Each issue produces **one or more pairs** of annotated screenshots.
 
@@ -177,8 +197,16 @@ handled natively — no coordinate conversion required.
 
 Return exactly:
 
-1. How to programmatically locate the relevant element(s) on the standard page
-2. How to locate the corresponding element(s) on the dev page
-3. The specific computed style properties that differ, with exact values from each page
-4. A numerical calculation proving those values explain the visual gap
-5. Absolute paths to both annotated screenshots and a brief description of what each shows
+1. **Verdict** — one of:
+   - `REAL` — the computed style values differ beyond tolerance and the issue is confirmed
+   - `FALSE_POSITIVE` — the measured values are identical (or within ±1px tolerance); the issue
+     does not exist in the actual rendered output
+2. How to programmatically locate the relevant element(s) on the standard page
+3. How to locate the corresponding element(s) on the dev page
+4. The specific computed style properties compared, with exact values from each page
+   (include this even for false positives)
+5. For `REAL` issues only: a numerical calculation proving those values explain the visual gap
+6. For `REAL` issues only: absolute paths to both annotated screenshots and a brief description
+   of what each shows
+
+If the verdict is `FALSE_POSITIVE`, omit items 5 and 6 — no screenshots are produced.

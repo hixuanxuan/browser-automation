@@ -163,7 +163,7 @@ export async function runScript(cdp, expression) {
 /** Open a new browser tab navigating to url. Returns the tab descriptor. */
 export async function openTab(url, host = 'localhost:9222') {
     try {
-        const r = await fetch(`http://${host}/json/new?${url}`, {method: 'PUT'});
+        const r = await fetch(`http://${host}/json/new?${encodeURIComponent(url)}`, {method: 'PUT'});
         return r.json();
     }
     catch {
