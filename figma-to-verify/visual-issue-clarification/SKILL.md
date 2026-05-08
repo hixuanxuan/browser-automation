@@ -124,9 +124,17 @@ brackets are visually cleaner and more direct than a floating label box for prov
 
 #### Annotation label rules
 
+**Labels must show computed values, not CSS/style source values.**
+Annotations are meant to help a reader understand the rendered result directly from the screenshot.
+Always use the resolved pixel value from `getComputedStyle` — never a raw CSS value like `1.5rem`,
+`50%`, or `var(--spacing-md)`.
+- `width: 278px` ✓ — computed pixel value
+- `margin-left: 20px` ✓ — computed pixel value
+- `padding-top: 1.5rem` ✗ — CSS source value, not computed
+- `gap: var(--space-2)` ✗ — CSS source value, not computed
+- `width: 50%` ✗ — CSS source value, not computed
+
 **Each screenshot describes only its own page's state** — no cross-page references.
-- `width: 278px` ✓
-- `margin-left: 20px` ✓
 - `width: 278px (expected 330px)` ✗ — references the other page
 - `class: _58b44ba9d8862103-info` ✗ — not runtime state
 - `<div> flex row` ✗ — not runtime state
