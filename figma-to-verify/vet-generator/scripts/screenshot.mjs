@@ -21,19 +21,21 @@
  *   Takes a full-page screenshot (captureBeyondViewport: true).
  */
 
-import { writeFile } from 'fs/promises';
-import { resolve as resolvePath } from 'path';
-import { openSession, arg, flag } from './cdp.mjs';
+import {writeFile} from 'fs/promises';
+import {resolve as resolvePath} from 'path';
+import {openSession, arg, flag} from './cdp.mjs';
 
-const tabId     = arg('tab');
-const selector  = arg('selector');
-const output    = arg('output');
-const cdpHost   = arg('cdp') || 'localhost:9222';
+const tabId = arg('tab');
+const selector = arg('selector');
+const output = arg('output');
+const cdpHost = arg('cdp') || 'localhost:9222';
 const noIsolate = flag('no-isolate');
 
 if (!tabId || !output) {
-  console.error('Usage: node screenshot.mjs --tab <tabId> --output <path.png> [--selector <css>] [--cdp host:port] [--no-isolate]');
-  process.exit(1);
+    console.error(
+        'Usage: node screenshot.mjs --tab <tabId> --output <path.png> [--selector <css>] [--cdp host:port] [--no-isolate]'
+    );
+    process.exit(1);
 }
 
 const cdp = await openSession(tabId, cdpHost);
@@ -41,16 +43,16 @@ const cdp = await openSession(tabId, cdpHost);
 let clip = null;
 
 if (selector) {
-  const isolateExpr = noIsolate
-    // No-isolate: just read the rect
-    ? `(function(sel) {
+    const isolateExpr = noIsolate
+        // No-isolate: just read the rect
+        ? `(function(sel) {
         const el = document.querySelector(sel);
         if (!el) throw new Error('Element not found: ' + sel);
         const r = el.getBoundingClientRect();
         return { x: r.left + window.scrollX, y: r.top + window.scrollY, width: r.width, height: r.height };
       })(${JSON.stringify(selector)})`
-    // Isolate: hide off-path elements, read rect
-    : `(function(sel) {
+        // Isolate: hide off-path elements, read rect
+        : `(function(sel) {
         const target = document.querySelector(sel);
         if (!target) throw new Error('Element not found: ' + sel);
 
@@ -76,26 +78,27 @@ if (selector) {
         return { x: r.left + window.scrollX, y: r.top + window.scrollY, width: r.width, height: r.height };
       })(${JSON.stringify(selector)})`;
 
-  const evalResult = await cdp.send('Runtime.evaluate', { expression: isolateExpr, returnByValue: true });
-  if (evalResult.exceptionDetails) {
-    console.error('Error:', evalResult.exceptionDetails.exception?.description ?? evalResult.exceptionDetails.text);
-    cdp.close(); process.exit(1);
-  }
-  const rect = evalResult.result.value;
-  console.log(`Rect: x=${rect.x} y=${rect.y} w=${rect.width} h=${rect.height}${noIsolate ? ' (no-isolate)' : ''}`);
-  clip = { x: rect.x, y: rect.y, width: rect.width, height: rect.height, scale: 1 };
+    const evalResult = await cdp.send('Runtime.evaluate', {expression: isolateExpr, returnByValue: true});
+    if (evalResult.exceptionDetails) {
+        console.error('Error:', evalResult.exceptionDetails.exception?.description ?? evalResult.exceptionDetails.text);
+        cdp.close();
+        process.exit(1);
+    }
+    const rect = evalResult.result.value;
+    console.log(`Rect: x=${rect.x} y=${rect.y} w=${rect.width} h=${rect.height}${noIsolate ? ' (no-isolate)' : ''}`);
+    clip = {x: rect.x, y: rect.y, width: rect.width, height: rect.height, scale: 1};
 }
 
 const shot = await cdp.send('Page.captureScreenshot', {
-  format: 'png',
-  captureBeyondViewport: true,
-  ...(clip ? { clip } : {}),
+    format: 'png',
+    captureBeyondViewport: true,
+    ...(clip ? {clip} : {}),
 });
 
 // Restore visibility if isolation was applied
 if (selector && !noIsolate) {
-  await cdp.send('Runtime.evaluate', {
-    expression: `(function() {
+    await cdp.send('Runtime.evaluate', {
+        expression: `(function() {
       const saved = window.__screenshot_saved__;
       if (saved) {
         saved.forEach(([el, val, prio]) => {
@@ -105,7 +108,7 @@ if (selector && !noIsolate) {
         delete window.__screenshot_saved__;
       }
     })()`,
-  });
+    });
 }
 
 cdp.close();

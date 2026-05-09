@@ -1,7 +1,7 @@
 import looksSame from 'looks-same';
-import { resolve } from 'path';
+import {resolve} from 'path';
 
-const [,, img1, img2, output] = process.argv;
+const [, , img1, img2, output] = process.argv;
 
 if (!img1 || !img2 || !output) {
     console.error('Usage: node diff.mjs <img1> <img2> <output>');

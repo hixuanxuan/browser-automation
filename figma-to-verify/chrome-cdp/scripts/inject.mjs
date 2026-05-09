@@ -6,21 +6,23 @@
  *   node inject.mjs --url <script-url> [--tab <id>] [--match <url-pattern>] [--cdp localhost:9222]
  */
 
-import { openSession, resolveTab, arg } from './cdp.mjs';
+import {openSession, resolveTab, arg} from './cdp.mjs';
 
 const scriptUrl = arg('url');
-const cdpHost   = arg('cdp') || 'localhost:9222';
+const cdpHost = arg('cdp') || 'localhost:9222';
 
 if (!scriptUrl) {
-  console.error('Usage: node inject.mjs --url <script-url> [--tab <id>] [--match <url-pattern>] [--cdp localhost:9222]');
-  process.exit(1);
+    console.error(
+        'Usage: node inject.mjs --url <script-url> [--tab <id>] [--match <url-pattern>] [--cdp localhost:9222]'
+    );
+    process.exit(1);
 }
 
 const tabId = await resolveTab(cdpHost);
-const cdp   = await openSession(tabId, cdpHost);
+const cdp = await openSession(tabId, cdpHost);
 
 const result = await cdp.send('Runtime.evaluate', {
-  expression: `
+    expression: `
     new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = ${JSON.stringify(scriptUrl)};
@@ -29,15 +31,15 @@ const result = await cdp.send('Runtime.evaluate', {
       document.head.appendChild(s);
     })
   `,
-  returnByValue: true,
-  awaitPromise: true,
+    returnByValue: true,
+    awaitPromise: true,
 });
 
 cdp.close();
 
 if (result.exceptionDetails) {
-  console.error('Error:', result.exceptionDetails.exception?.description ?? result.exceptionDetails.text);
-  process.exit(1);
+    console.error('Error:', result.exceptionDetails.exception?.description ?? result.exceptionDetails.text);
+    process.exit(1);
 }
 
 console.log(`Injected: ${scriptUrl}`);

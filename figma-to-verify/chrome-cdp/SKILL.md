@@ -1,12 +1,8 @@
 ---
 name: chrome-cdp
 description: >
-  Control and automate Chrome browser tabs via Chrome DevTools Protocol (CDP).
-  Use this skill for any browser automation task: opening tabs, navigating pages, clicking elements,
-  filling forms, taking screenshots, injecting scripts, waiting for elements, or extracting page content.
-  Triggers on: "open tab", "navigate to", "click element", "fill form", "screenshot page", "inject script",
-  "wait for element", "get page HTML/text", "browser automation", "CDP", "chrome automation",
-  浏览器自动化, 页面截图, 点击元素, 填写表单, 注入脚本, 等待元素.
+  Control Chrome browser tabs directly via Chrome DevTools Protocol (CDP). Use this skill for direct browser-control and debugging tasks: opening tabs, navigating pages, injecting scripts, executing JavaScript, inspecting browser tabs, extracting DOM, or getting page HTML/text. Do not use it for end-to-end UI correctness verification, visual QA, or screenshot evidence reports; use visual-verify for those workflows instead.
+  Triggers on: "Chrome DevTools Protocol", "CDP", "Chrome CDP control", "inject script", "execute JavaScript", "extract DOM", "get page HTML/text", CDP调试, 浏览器CDP控制, 注入脚本, 执行脚本, 提取DOM, 获取页面HTML.
 ---
 
 # Chrome CDP

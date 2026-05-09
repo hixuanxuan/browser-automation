@@ -28,25 +28,25 @@
  *   node screenshot.mjs --tab <id> --selector <root> --output vet-dev.png --no-isolate
  */
 
-import { readFile, writeFile } from 'fs/promises';
-import { resolve as resolvePath } from 'path';
-import { openSession, runScript, arg } from './cdp.mjs';
+import {readFile, writeFile} from 'fs/promises';
+import {resolve as resolvePath} from 'path';
+import {openSession, runScript, arg} from './cdp.mjs';
 
-const tabId    = arg('tab');
-const configP  = arg('config');
-const cdpHost  = arg('cdp') || 'localhost:9222';
+const tabId = arg('tab');
+const configP = arg('config');
+const cdpHost = arg('cdp') || 'localhost:9222';
 
 if (!tabId || !configP) {
-  console.error('Usage: node inject-overlay.mjs --tab <tabId> --config <mapping.json> [--cdp host:port]');
-  process.exit(1);
+    console.error('Usage: node inject-overlay.mjs --tab <tabId> --config <mapping.json> [--cdp host:port]');
+    process.exit(1);
 }
 
 const config = JSON.parse(await readFile(resolvePath(configP), 'utf8'));
 const blocks = config.blocks;
 
 if (!Array.isArray(blocks) || blocks.length === 0) {
-  console.error('Config must have a non-empty "blocks" array.');
-  process.exit(1);
+    console.error('Config must have a non-empty "blocks" array.');
+    process.exit(1);
 }
 
 const cdp = await openSession(tabId, cdpHost);
@@ -108,6 +108,10 @@ cdp.close();
 
 console.log(`Overlay injected: ${result.added} blocks`);
 for (const r of result.results) {
-  if (r.notFound) console.warn(`  WARNING: selector not found — "${r.selector}"`);
-  else console.log(`  ${r.color}  ×${r.count}  "${r.selector}"`);
+    if (r.notFound) {
+        console.warn(`  WARNING: selector not found — "${r.selector}"`);
+    }
+    else {
+        console.log(`  ${r.color}  ×${r.count}  "${r.selector}"`);
+    }
 }

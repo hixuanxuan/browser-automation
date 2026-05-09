@@ -13,7 +13,9 @@ const cdpHost = arg('cdp') || 'localhost:9222';
 const tabId = await resolveTab(cdpHost);
 const cdp = await openSession(tabId, cdpHost);
 
-const raw = await runScript(cdp, `
+const raw = await runScript(
+    cdp,
+    `
 JSON.stringify(
   Array.from(document.querySelectorAll('button,a,input,textarea,[role],[aria-label],[class]'))
     .filter(el => el.offsetWidth || el.offsetHeight)
@@ -31,7 +33,8 @@ JSON.stringify(
       },
     }))
 )
-`);
+`
+);
 
 cdp.close();
 console.log(JSON.stringify(JSON.parse(raw), null, 2));

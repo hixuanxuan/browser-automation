@@ -14,8 +14,8 @@ const url = arg('url');
 const cdpHost = arg('cdp') || 'localhost:9222';
 
 if (!url) {
-  console.error('Usage: node open-tab.mjs --url <url> [--cdp localhost:9222]');
-  process.exit(1);
+    console.error('Usage: node open-tab.mjs --url <url> [--cdp localhost:9222]');
+    process.exit(1);
 }
 
 const tab = await openTab(url, cdpHost);

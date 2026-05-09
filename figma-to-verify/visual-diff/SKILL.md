@@ -1,12 +1,9 @@
 ---
 name: visual-diff
 description: >
-  Visual regression comparison between a standard (reference) page and a dev (implementation) page
-  using Chrome CDP and a Visual Element Tree (VET) overlay. Use this skill whenever the user wants
-  to visually compare two web pages, find layout or spacing differences, generate VET overlays,
-  identify UI bugs, or produce investigation prompts for a downstream agent to diagnose precise
-  CSS discrepancies. Triggers on: visual diff, page comparison, VET overlay, screenshot diff,
-  UI regression, layout bug, 视觉对比, 页面diff, 开发页和标准页对比, 截图diff, 样式差异排查.
+  Figma visual inspection for design-to-implementation visual QA. Use this skill only when the task provides a Figma URL or exported Figma HTML and a dev page to compare against, using Chrome CDP and Visual Element Tree (VET) overlays to inspect layout, spacing, style, and annotated evidence. If there is no Figma source, use visual-verify instead.
+  Triggers on:
+  Figma视觉走查, Figma还原度, 设计稿对比, 走查, Figma URL + page comparison, exported Figma HTML + page comparison, visual diff against Figma, compare dev page to Figma, 页面和设计稿diff, 还原度检查, 标注视觉差异.
 ---
 
 # Visual Diff Skill
