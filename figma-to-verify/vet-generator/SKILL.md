@@ -131,11 +131,31 @@ node <chrome-cdp>/scripts/navigate.mjs --tab <DEV_TAB> --url <dev-url>
 
 Capture what both pages actually look like before any overlay, as reference for later comparison.
 
-```bash
-# Full page (standard)
-node screenshot.mjs --tab <STD_TAB> --output <out>/original-standard.png
+Both screenshots must be scoped to the top-level element — never use a full-page (no-selector) capture.
+For Figma HTML (the standard page), the root element is `body > :first-child`. Resolve the actual
+selector before taking the screenshot:
 
-# Scoped element (dev) — if comparing a specific component
+```bash
+# Find the top-level element on the standard page
+node .comate/skills/chrome-cdp/scripts/eval.mjs \
+  --tab <STD_TAB> --cdp localhost:9222 \
+  --script 'JSON.stringify((function() {
+    const el = document.querySelector("body > :first-child");
+    const r = el.getBoundingClientRect();
+    return { tag: el.tagName, cls: el.className.slice(0, 60),
+             width: r.width, height: r.height };
+  })())'
+```
+
+Confirm the returned element is the design root (expected width ≈ viewport width, height ≈ design height).
+Use the confirmed selector (e.g. `body > div:first-child` or a class-qualified form) for all subsequent
+standard-page screenshots.
+
+```bash
+# Top-level element (standard — Figma HTML root)
+node screenshot.mjs --tab <STD_TAB> --selector "body > :first-child" --output <out>/original-standard.png
+
+# Top-level element (dev)
 node screenshot.mjs --tab <DEV_TAB> --selector "<root-selector>" --output <out>/original-dev.png
 ```
 
@@ -146,9 +166,9 @@ node screenshot.mjs --tab <DEV_TAB> --selector "<root-selector>" --output <out>/
 node inject-vet.mjs --tab <STD_TAB> --output <out>/std-vet-info.json \
      [--root "<scope-selector>"] [--layers 2]
 
-# Screenshot the overlay (no-isolate keeps the overlay visible in the crop)
-node screenshot.mjs --tab <STD_TAB> --selector "body" --output <out>/vet-standard.png --no-isolate
-# or, if VET is scoped to a specific element:
+# Screenshot the overlay scoped to the design root (no-isolate keeps the overlay visible)
+node screenshot.mjs --tab <STD_TAB> --selector "body > :first-child" --output <out>/vet-standard.png --no-isolate
+# or, if VET is scoped to a more specific element:
 node screenshot.mjs --tab <STD_TAB> --selector "<root-selector>" --output <out>/vet-standard.png --no-isolate
 ```
 
