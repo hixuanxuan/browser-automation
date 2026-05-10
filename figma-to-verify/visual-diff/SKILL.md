@@ -97,13 +97,19 @@ Record `VIEWPORT_WIDTH`, `IS_MOBILE`. Proceed to Step 4.
    ```bash
    npx --yes serve "<workspace>/<node-name>" --listen 8989 --no-clipboard
    ```
-   If port 8989 is already in use, try 8990, 8991, and so on until one succeeds.
+   `serve` defaults to port 8989, but if that port is already in use it will automatically pick an available one.
+   After the background task starts, read its output file and look for a line like:
+   ```
+   INFO  Accepting connections at http://localhost:59136
+   ```
+   Extract the actual port from that URL — **use this dynamic port for all subsequent steps**, not the requested 8989.
    Record the chosen port and the background task ID returned by the tool (used to stop it later).
 
-4. Verify the server is reachable:
+4. **Only after the actual port has been extracted from the serve output (step 3 above)**, verify the server is reachable:
    ```bash
    curl -s -o /dev/null -w "%{http_code}" http://localhost:<port>/
    ```
+   Do **not** proceed with this step until `<port>` is confirmed from the `INFO  Accepting connections at ...` line — never assume 8989.
    Retry up to 3 times (with a 1-second delay) if not yet responding.
 
 5. Set `std-url` = `http://localhost:<port>` and proceed to Step 4.
