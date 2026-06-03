@@ -43,7 +43,7 @@ case "$OS" in
     ;;
   MINGW*|MSYS*|CYGWIN*)
     CHROME_BIN="C:/Program Files/Google/Chrome/Application/chrome.exe"
-    USER_DATA_DIR="C:/Temp/chrome-debug"
+    USER_DATA_DIR="$HOME/.chrome-debug"
     ;;
   *)
     echo "[ensure-chrome] ERROR: Unsupported OS: $OS" >&2

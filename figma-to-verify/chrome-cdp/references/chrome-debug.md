@@ -8,31 +8,33 @@ Chrome must be launched with remote debugging enabled before any `chrome-cdp` sc
 # Chrome
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
   --remote-debugging-port=9222 \
-  --remote-debugging-address=0.0.0.0
+  --remote-debugging-address=0.0.0.0 \
+  --user-data-dir="$HOME/.chrome-debug"
 
 # Chrome Canary
 /Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary \
-  --remote-debugging-port=9222
+  --remote-debugging-port=9222 \
+  --user-data-dir="$HOME/.chrome-debug"
 ```
 
 Or create a convenience alias:
 
 ```bash
-alias chrome-debug='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222'
+alias chrome-debug='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222 --user-data-dir="$HOME/.chrome-debug"'
 ```
 
 ## Linux
 
 ```bash
-google-chrome --remote-debugging-port=9222 --remote-debugging-address=0.0.0.0
+google-chrome --remote-debugging-port=9222 --remote-debugging-address=0.0.0.0 --user-data-dir="$HOME/.chrome-debug"
 # or
-chromium-browser --remote-debugging-port=9222
+chromium-browser --remote-debugging-port=9222 --user-data-dir="$HOME/.chrome-debug"
 ```
 
 ## Windows
 
 ```
-"C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222
+"C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="$HOME/.chrome-debug"
 ```
 
 ## Verify the connection
@@ -50,4 +52,4 @@ You should see a JSON array of open tabs. Each tab has an `"id"` field — this 
 - If Chrome is already running **without** `--remote-debugging-port`, you must quit it first and relaunch with the flag. There is no way to enable debugging on a running Chrome instance.
 - The `--remote-debugging-address=0.0.0.0` flag allows connections from outside localhost (e.g. Docker containers). Omit it if you only need local access.
 - To use a different port, pass `--cdp localhost:<port>` to any chrome-cdp script.
-- On macOS, the default Chrome user profile is used. To isolate the session, add `--user-data-dir=/tmp/chrome-debug`.
+- Browser state is persisted in the explicit Chrome profile directory: `$HOME/.chrome-debug`. Cookies and sessions stay there across Chrome restarts until the directory is deleted.

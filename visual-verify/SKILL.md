@@ -59,7 +59,7 @@ bash <workspace>/visual-verify/scripts/ensure-chrome.sh
 ```
 
 - If Chrome is already running with CDP on port 9222 → exits immediately, nothing changes
-- If not running → detects OS, launches Chrome with an isolated profile (`/tmp/chrome-debug`), polls until ready
+- If not running → detects OS, launches Chrome with a persistent profile (`$HOME/.chrome-debug`), polls until ready
 
 If the script exits with code 1, report the error to the user and stop.
 

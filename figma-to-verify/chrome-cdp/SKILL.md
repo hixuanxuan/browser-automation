@@ -14,6 +14,8 @@ Control Chrome browser tabs via Chrome DevTools Protocol.
 Chrome must be running with remote debugging enabled. If scripts fail to connect, see
 `references/chrome-debug.md` for setup instructions. The scripts print the startup command on error.
 
+Use a persistent Chrome profile when launching Chrome for this skill. Cookies, sessions, and other browser state should be stored in `$HOME/.chrome-debug`.
+
 Install dependencies once:
 
 ```bash
